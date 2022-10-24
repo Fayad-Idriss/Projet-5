@@ -41,20 +41,26 @@ function loadProduct (product){
             colorProduct.innerHTML += `<option value="${color}">${color}</option>`  
         }
 };
+  
+        
 
 
 clickBtn();
 
 //Fonction de gestion de l'ajout au panier au click du bouton 
 function clickBtn(){
+
+
+    let local = JSON.parse(localStorage.getItem("panier"))
     let btnAddToCart = document.getElementById("addToCart");
     //Ecoute du bouton "Ajouter au panier"
     btnAddToCart.addEventListener("click", (e) =>{
         e.preventDefault()
-        if(colorProduct.value === "" || quantity.value == null || quantity.value <= 0){
+        if(colorProduct.value === "" || quantity.value == null || quantity.value <= 0 ){
             alert("Choississez une couleur et une quantité !");
 
-        } else if (quantity.value > 0 && quantity.value <= 100){
+        }else if (quantity.value > 0 && quantity.value <= 100 ){
+            
             // object à envoyer dans le LocalStorage
             const optionProducts ={
                 id: productId,
@@ -63,17 +69,17 @@ function clickBtn(){
             }
 
              addPanier(optionProducts)
-            window.location.href = "cart.html"
-        } else if (quantityProduct.value > 100){
-            alert(" Désolé vous ne pouvez pas prendre plus de 100 articles par commande")
-        }
-
-
+            
+            
+        } 
+        
+       
+ 
     })
 }
 
 
- 
+
 
 
 //                                                                        PARTIE LOCALSTORAGE
@@ -81,23 +87,30 @@ function clickBtn(){
 
 function savePanier(panier){   //Fonction de sauvegarde dans le localeStorage
     localStorage.setItem("panier", JSON.stringify(panier));
-
+    alert("Le produit a bien était ajouter")
 } 
 
  
    
 function addPanier(product){       //fonction d'ajout au panier
-     
+
     let foundProduct = panier.find(p => p.id == product.id && p.color == product.color)  // Le find permet de rechercher des éléments par rapport a une condition  
     if(foundProduct != undefined){
         let newQuantity = Number(parseInt(foundProduct.quantity) + parseInt(product.quantity))
         foundProduct.quantity = newQuantity
+        if(newQuantity >= 100){
+            alert("Vous ne pouvez pas prendre plus de 100 articles")
+        }else{
+            savePanier(panier)
+        }
+    
     }else{
         
         panier.push(product);
+        savePanier(panier)
     }
      
-    savePanier(panier)
+    //savePanier(panier)
 }
 
 function removePanier(product){

@@ -31,7 +31,7 @@ fetch("http://localhost:3000/api/products")
               <div class="cart__item__content__description">
                 <h2>${allItems.name}</h2>
                 <p> ${dataStorage.color}</p>
-                <p>${allItems.price}</p>
+                <p>${allItems.price}€</p>
               </div>
               <div class="cart__item__content__settings">
                 <div class="cart__item__content__settings__quantity">
@@ -47,7 +47,6 @@ fetch("http://localhost:3000/api/products")
         
           `
 
-         
  
         function totalPrices() {
            total = 0 
@@ -91,7 +90,9 @@ fetch("http://localhost:3000/api/products")
           itemsInLocalStorage[i].quantity = btn.value     // verifier le nombre dans item.     itemInlocalestorage l'objet
 
            localStorage.setItem("panier", JSON.stringify(itemsInLocalStorage))   //enregistrement de itemLocaleStorage dans le localeStorage
-              location.href = "cart.html"
+              //location.href = "cart.html"
+              totalPrices()
+              totalQuantity()
           }) 
         }) 
       }
@@ -114,6 +115,7 @@ fetch("http://localhost:3000/api/products")
         deletePage()
 
 
+
         function supprimer(i) {
           itemsInLocalStorage.splice(i, 1)
           }
@@ -134,7 +136,7 @@ fetch("http://localhost:3000/api/products")
  
 
   })
-
+ 
 
  
  
@@ -157,7 +159,7 @@ let valuePrenom, valueNom, valueEmail, valueAdresse, valueVille
 
 function formulairePrenom(){
 
-prenom.addEventListener("input", function (e) {
+ prenom.addEventListener("input", function (e) {
   valuePrenom;
   if(e.target.value.length == 0 ){    // Ici on va écouter la valeur du nombre de lettre 
     console.log("rien")
@@ -173,7 +175,7 @@ prenom.addEventListener("input", function (e) {
   } 
 
 
-  if (e.target.value.match(/^[a-z A-Z]{3,25}$/)){  // Voici le regex qui nous permet de vérifier une seconde condition 
+  if (e.target.value.match(/^[A-Z][A-Za-z\é\è\ê\-]+$/)){  // Voici le regex qui nous permet de vérifier une seconde condition 
     firstNameErrorMsg.innerHTML = ""
     valuePrenom = e.target.value
     console.log("succes")
@@ -206,7 +208,7 @@ function formulaireNom(){
     } 
   
   
-    if (e.target.value.match(/^[a-z A-Z]{3,25}$/)){  // Voici le regex qui nous permet de vérifier une seconde condition 
+    if (e.target.value.match(/^[A-Z][A-Za-z\é\è\ê\-]+$/)){  // Voici le regex qui nous permet de vérifier une seconde condition 
       lastNameErrorMsg.innerHTML = ""
       valueNom = e.target.value
       console.log("succes")
@@ -258,21 +260,10 @@ function formulaireNom(){
 
       ville.addEventListener("input", function (e) {
         valueVille;
-        if(e.target.value.length == 0 ){    // Ici on va écouter la valeur du nombre de lettre 
-          console.log("rien")
-          cityErrorMsg.innerHTML = ""
-          valueVille = null
-          console.log(valueVille)
-           
-       
-        } else if (e.target.value.length < 3 || e.target.value.length > 25 ){
-          cityErrorMsg.innerHTML = "doit contenir entre 3 et 25 caractéres"
-          valueVille = null
-          console.log("trop court ou trop long")
-        } 
       
       
-        if (e.target.value.match(/^[a-z A-Z]{3,25}$/)){  // Voici le regex qui nous permet de vérifier une seconde condition 
+      
+        if (e.target.value.match(/^[A-Z][A-Za-z\é\è\ê\-]+/)){  // Voici le regex qui nous permet de vérifier une seconde condition 
           cityErrorMsg.innerHTML = ""
           valueVille = e.target.value
           console.log("succes")
@@ -333,8 +324,7 @@ function formulaireNom(){
 
         formulaireButton.addEventListener("submit", (e) => {
           e.preventDefault()
-          console.log("poste stoper")
-
+      
 
           if (valuePrenom && valueNom && valueEmail && valueVille && valueAdresse){
             console.log("c'est bon envoie")
@@ -345,8 +335,13 @@ function formulaireNom(){
 
 
             commandeFinale.forEach((commande) => {          // La boucle qui permet de faire les tours des elements de la commande 
-              commandeId.push(commande.id)      // On push les elements de la commande dans le tableau 
-            })
+         
+                commandeId.push(commande.id)      // On push les elements de la commande dans le tableau 
+             
+
+           })
+
+       
 
             const data = {                // Liste des elements à envoyer à l'API
               contact: {
@@ -357,8 +352,10 @@ function formulaireNom(){
                 email : valueEmail,
               },
               products: commandeId,
-
-            }
+            } 
+          
+            
+           
 
 
 
@@ -371,26 +368,42 @@ function formulaireNom(){
             }).then((res) => res.json())
               .then((promise) => {
               const orderId = promise.orderId
+
+              
+        
               
               let responseServeur = promise      // on met la reponse serveur dans cette variable
 
-  
-                localStorage.removeItem("panier")
-                window.location.href = "confirmation.html" + "?orderId=" + orderId   // Le order id a faire passer de l'autre coté
-
+              
+              //localStorage.removeItem("panier")
+              window.location.href = "confirmation.html" + "?orderId=" + orderId   // Le order id a faire passer de l'autre coté
 
             })
 
-          } else{
-            alert("remplir le formulaire correctement")
+      
+          }else{
+            console.log("zeub")
+            alert("Veuillez remplir le formlaire correctement.")
           }
+
+
         })
  
+        console.log(itemsInLocalStorage)
 
         let stockagePanier = JSON.parse(localStorage.getItem("commandes"))    //Variable pour stocker la commande
-        
-   
 
+        
+
+
+
+         if(itemsInLocalStorage.length == null || itemsInLocalStorage.length == 0){
+          alert("Erreur le panier et vide ")
+          window.location.href = "index.html"
+         }
+
+
+     
 
        
 

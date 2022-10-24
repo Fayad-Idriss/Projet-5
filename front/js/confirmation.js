@@ -8,3 +8,4 @@
 
  const orderIdConfirmation = document.getElementById("orderId")
  orderIdConfirmation.innerHTML = orderId  
+ localStorage.removeItem("panier")
